@@ -7,9 +7,41 @@ import xyz.lorcasdev.model.Quote;
 
 public class DiscountService {
 
-    public List<DiscountType> getActiveDiscounts() {
-        // Retornamos todos los tipos de descuentos disponibles como ejemplo
-        return List.of(DiscountType.values());
+    public List<String> getActiveDiscountRules() {
+        return List.of(
+                "1. 10% de descuento en compras a partir de $1,000,000",
+                "2. 5% de descuento en compras a partir de $500,000"
+        );
+    }
+
+    public void applyAutomaticDiscounts(Quote quote) {
+        double subtotal = quote.getSubtotal();
+        int discountAmount = 0;
+        int discountValue = 0;
+        String ruleApplied = "";
+
+        // Evaluamos las reglas de mayor a menor beneficio
+        if (subtotal >= 1_000_000) {
+            discountValue = 10;
+            discountAmount = (int) (subtotal * discountValue / 100.0);
+            ruleApplied = "10% de descuento por compras a partir de $1,000,000";
+        } else if (subtotal >= 500_000) {
+            discountValue = 5;
+            discountAmount = (int) (subtotal * discountValue / 100.0);
+            ruleApplied = "5% de descuento por compras a partir de $500,000";
+        }
+
+        if (discountAmount > 0) {
+            quote.setDiscountValue(discountValue);
+            quote.setDiscountAmount(discountAmount);
+            quote.setTotal((int) subtotal - discountAmount);
+            System.out.println("\n*** DESCUENTO APLICADO ***");
+            System.out.println("Regla: " + ruleApplied);
+            System.out.println("Descuento: -$" + discountAmount);
+        } else {
+            quote.setDiscountAmount(0);
+            quote.setTotal((int) subtotal);
+        }
     }
 
     public void applyDiscounts(Quote quote, DiscountType type, int discountValue) {

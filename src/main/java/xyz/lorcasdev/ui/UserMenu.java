@@ -124,7 +124,7 @@ public class UserMenu {
 
     private void viewDiscounts() {
         System.out.println("\n--- Descuentos Activos ---");
-        discountService.getActiveDiscounts().forEach(System.out::println);
+        discountService.getActiveDiscountRules().forEach(System.out::println);
     }
 
     private void confirmQuote() {

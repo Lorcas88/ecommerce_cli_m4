@@ -34,8 +34,8 @@ public class Main {
         CatalogService catalogService = new CatalogService(catalogRepository, itemRepository, catalogItemRepository);
         QuoteService quoteService = new QuoteService(quoteRepository, quoteItemRepository);
         OrderService orderService = new OrderService(orderRepository, orderItemRepository);
-        TiendaService tiendaService = new TiendaService(quoteService, orderService, quoteRepository, quoteItemRepository);
         DiscountService discountService = new DiscountService();
+        TiendaService tiendaService = new TiendaService(quoteService, orderService, quoteRepository, quoteItemRepository, discountService);
 
         // 3. Cargar datos de prueba
         DataSeeder.cargarDatosEjemplo(catalogService);

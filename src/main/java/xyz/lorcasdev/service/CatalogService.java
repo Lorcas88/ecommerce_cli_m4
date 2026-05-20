@@ -1,10 +1,8 @@
 package xyz.lorcasdev.service;
 
-import java.util.Comparator;
 import java.util.List;
 
 import xyz.lorcasdev.enums.ComplexityLevel;
-import xyz.lorcasdev.exception.ElementNotFoundException;
 import xyz.lorcasdev.model.Catalog;
 import xyz.lorcasdev.model.CatalogItem;
 import xyz.lorcasdev.model.Item;

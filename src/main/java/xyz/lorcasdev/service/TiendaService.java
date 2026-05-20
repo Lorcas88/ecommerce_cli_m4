@@ -16,12 +16,14 @@ public class TiendaService {
     private final OrderService orderService;
     private final QuoteRepository quoteRepository;
     private final QuoteItemRepository quoteItemRepository;
+    private final DiscountService discountService;
 
-    public TiendaService(QuoteService quoteService, OrderService orderService, QuoteRepository quoteRepository, QuoteItemRepository quoteItemRepository) {
+    public TiendaService(QuoteService quoteService, OrderService orderService, QuoteRepository quoteRepository, QuoteItemRepository quoteItemRepository, DiscountService discountService) {
         this.quoteService = quoteService;
         this.orderService = orderService;
         this.quoteRepository = quoteRepository;
         this.quoteItemRepository = quoteItemRepository;
+        this.discountService = discountService;
     }
 
     public Order confirmQuoteAndCreateOrder(int quoteId, OrderStatus initialOrderStatus, LocalDateTime estimatedDeliveryDate) {
@@ -31,10 +33,13 @@ public class TiendaService {
         // 2. Obtener la cotización original
         Quote quote = quoteRepository.findById(quoteId);
 
-        // 3. Crear la orden principal
+        // 3. Evaluar y aplicar descuentos automáticos
+        discountService.applyAutomaticDiscounts(quote);
+
+        // 4. Crear la orden principal
         Order order = orderService.createOrderFromQuote(quote, initialOrderStatus, estimatedDeliveryDate);
 
-        // 4. Obtener los ítems de la cotización y agregarlos a la orden
+        // 5. Obtener los ítems de la cotización y agregarlos a la orden
         List<QuoteItem> quoteItems = quoteItemRepository.findAll().stream()
                 .filter(qi -> qi.getQuote().getId() == quoteId)
                 .toList();
@@ -43,7 +48,7 @@ public class TiendaService {
             orderService.addOrderItem(order.getId(), quoteItem.getCatalogItem(), quoteItem.getQuantity());
         }
 
-        // 5. Marcar la cotización original como aprobada
+        // 6. Marcar la cotización original como aprobada
         quoteService.approveQuote(quoteId);
 
         return order;
