@@ -4,13 +4,13 @@ public class OrderItem {
 
     private final int id;
     private final Order order;
-    private final ServiceItem serviceItem;
+    private final CatalogItem catalogItem;
     private int quantity;
     private int unitPrice;
     private int lineTotal;
     private double estimatedHours;
 
-    public OrderItem(int id, Order order, ServiceItem serviceItem, int quantity, int unitPrice, int lineTotal, double estimatedHours) {
+    public OrderItem(int id, Order order, CatalogItem catalogItem, int quantity, int unitPrice, int lineTotal, double estimatedHours) {
         Validator.positive(id, "id");
         Validator.notNegative(quantity, "quantity");
         Validator.positive(unitPrice, "unit_price");
@@ -18,7 +18,7 @@ public class OrderItem {
 
         this.id = id;
         this.order = order;
-        this.serviceItem = serviceItem;
+        this.catalogItem = catalogItem;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.lineTotal = lineTotal;
@@ -53,8 +53,8 @@ public class OrderItem {
         return order;
     }
 
-    public ServiceItem getServiceItem() {
-        return serviceItem;
+    public CatalogItem getServiceItem() {
+        return catalogItem;
     }
 
     public int getQuantity() {

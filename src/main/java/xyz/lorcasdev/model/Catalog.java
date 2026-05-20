@@ -1,6 +1,6 @@
 package xyz.lorcasdev.model;
 
-public class Service {
+public class Catalog {
 
     private final int id;
     private String name;
@@ -9,7 +9,7 @@ public class Service {
     private boolean isActive;
     private double estimatedBaseHours;
 
-    public Service(int id, String name, String description, int price, boolean isActive, double estimatedBaseHours) {
+    public Catalog(int id, String name, String description, int price, boolean isActive, double estimatedBaseHours) {
         Validator.positive(id, "id");
         Validator.notEmpty(name, "nombre");
         Validator.positive(price, "precio");
@@ -41,7 +41,7 @@ public class Service {
         this.isActive = active;
     }
 
-    public void setEstimatedBaseHours(Double estimatedBaseHours) {
+    public void setEstimatedBaseHours(double estimatedBaseHours) {
         Validator.notNegative(estimatedBaseHours, "horas base estimadas");
         this.estimatedBaseHours = estimatedBaseHours;
     }

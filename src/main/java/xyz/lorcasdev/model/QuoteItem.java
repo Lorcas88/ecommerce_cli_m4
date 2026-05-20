@@ -4,13 +4,13 @@ public class QuoteItem {
 
     private final int id;
     private final Quote quote;
-    private final ServiceItem serviceItem;
+    private final CatalogItem catalogItem;
     private int quantity;
     private int unitPrice;
     private double estimatedHours;
     private int lineTotal;
 
-    public QuoteItem(int id, Quote quote, ServiceItem serviceItem, int quantity, int unitPrice, double estimatedHours, int lineTotal) {
+    public QuoteItem(int id, Quote quote, CatalogItem catalogItem, int quantity, int unitPrice, double estimatedHours, int lineTotal) {
         Validator.positive(id, "id");
         Validator.notNegative(quantity, "quantity");
         Validator.positive(unitPrice, "unit_price");
@@ -18,7 +18,7 @@ public class QuoteItem {
 
         this.id = id;
         this.quote = quote;
-        this.serviceItem = serviceItem;
+        this.catalogItem = catalogItem;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.estimatedHours = estimatedHours;
@@ -53,8 +53,8 @@ public class QuoteItem {
         return quote;
     }
 
-    public ServiceItem getServiceItem() {
-        return serviceItem;
+    public CatalogItem getServiceItem() {
+        return catalogItem;
     }
 
     public int getQuantity() {

@@ -2,17 +2,17 @@ package xyz.lorcasdev.model;
 
 import xyz.lorcasdev.enums.ComplexityLevel;
 
-public class ServiceItem {
+public class CatalogItem {
 
     private final int id;
-    private final Service service;
+    private final Catalog catalog;
     private final Item item;
     private boolean isDefault;
     private final ComplexityLevel complexityLevel;
     private Integer priceOverride;
     private Double hoursOverride;
 
-    public ServiceItem(int id, Service service, Item item, boolean isDefault, ComplexityLevel complexityLevel, Integer priceOverride, Double hoursOverride) {
+    public CatalogItem(int id, Catalog catalog, Item item, boolean isDefault, ComplexityLevel complexityLevel, Integer priceOverride, Double hoursOverride) {
         Validator.positive(id, "id");
         if (priceOverride != null) {
             Validator.positive(priceOverride, "sobreescritura de precio");
@@ -22,7 +22,7 @@ public class ServiceItem {
         }
 
         this.id = id;
-        this.service = service;
+        this.catalog = catalog;
         this.item = item;
         this.isDefault = isDefault;
         this.complexityLevel = complexityLevel;
@@ -52,8 +52,8 @@ public class ServiceItem {
         return id;
     }
 
-    public Service getService() {
-        return service;
+    public Catalog getService() {
+        return catalog;
     }
 
     public Item getItem() {
@@ -76,8 +76,17 @@ public class ServiceItem {
         return hoursOverride;
     }
 
+    /**
+     * Método para verificar el estado de el catalogo o el item. Esto será usado
+     * para verificar si será posible agregar un item
+     */
+    public boolean isAvailable() {
+        return catalog.isActive()
+                && item.isActive();
+    }
+
     @Override
     public String toString() {
-        return String.format("ServiceItem[%d] - Service: %s, Item: %s (%s)", id, service.getName(), item.getName(), complexityLevel);
+        return String.format("CatalogItem[%d] - Service: %s, Item: %s (%s)", id, catalog.getName(), item.getName(), complexityLevel);
     }
 }
