@@ -53,7 +53,7 @@ public class QuoteItem {
         return quote;
     }
 
-    public CatalogItem getServiceItem() {
+    public CatalogItem getCatalogItem() {
         return catalogItem;
     }
 
@@ -69,7 +69,7 @@ public class QuoteItem {
         return estimatedHours;
     }
 
-    public double getLineTotal() {
+    public int getLineTotal() {
         return lineTotal;
     }
 

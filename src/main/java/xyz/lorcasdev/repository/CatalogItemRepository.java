@@ -16,9 +16,12 @@ public class CatalogItemRepository {
     private final Map<Integer, CatalogItem> catalogItems = new HashMap<>();
     private int counter = 1;
 
-    public CatalogItem save(Catalog catalog, Item item, boolean isDefault, ComplexityLevel complexityLevel, Integer priceOverride, Double hoursOverride) {
+    public CatalogItem save(Catalog catalog, Item item,
+            boolean isDefault, boolean isActive,
+            ComplexityLevel complexityLevel,
+            Integer priceOverride, Double hoursOverride) {
         int id = counter++;
-        CatalogItem catalogItem = new CatalogItem(id, catalog, item, isDefault, complexityLevel, priceOverride, hoursOverride);
+        CatalogItem catalogItem = new CatalogItem(id, catalog, item, isDefault, isActive, complexityLevel, priceOverride, hoursOverride);
         catalogItems.put(id, catalogItem);
         return catalogItem;
     }
@@ -33,6 +36,14 @@ public class CatalogItemRepository {
 
     public List<CatalogItem> findAll() {
         return new ArrayList<>(catalogItems.values());
+    }
+
+    public List<CatalogItem> findByCatalogId(int catalogId) {
+        return catalogItems.values().stream()
+                .filter(serviceItem
+                        -> serviceItem.getCatalog()
+                        .getId() == catalogId)
+                .toList();
     }
 
     public CatalogItem update(CatalogItem catalogItem) {

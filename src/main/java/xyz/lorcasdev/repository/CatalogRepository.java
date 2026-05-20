@@ -13,10 +13,10 @@ public class CatalogRepository {
     private final Map<Integer, Catalog> catalogs = new HashMap<>();
 
     // Contadores para generar IDs automáticos
-    private int serviceCounter = 1;
+    private int catalogCounter = 1;
 
     public Catalog save(String name, String description, int price, boolean isActive, double estimatedBaseHours) {
-        int id = serviceCounter++;
+        int id = catalogCounter++;
         Catalog s = new Catalog(id, name, description, price, true, estimatedBaseHours);
         catalogs.put(id, s);
         return s;

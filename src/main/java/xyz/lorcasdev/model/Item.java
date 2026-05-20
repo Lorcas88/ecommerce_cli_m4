@@ -61,7 +61,7 @@ public class Item {
         return description;
     }
 
-    public double getBaseUnitPrice() {
+    public int getBaseUnitPrice() {
         return baseUnitPrice;
     }
 

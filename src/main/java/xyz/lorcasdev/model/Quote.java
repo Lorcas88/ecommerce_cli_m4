@@ -13,7 +13,7 @@ public class Quote {
     private String guestEmail;
     private String guestPhone;
     private final QuoteStatus status;
-    private final DiscountType discountType;
+    private DiscountType discountType;
     private Integer discountValue;
     private Integer discountAmount;
     private int subtotal;
@@ -52,6 +52,10 @@ public class Quote {
 
     public void setGuestPhone(String guestPhone) {
         this.guestPhone = guestPhone;
+    }
+
+    public void setDiscountType(DiscountType discountType) {
+        this.discountType = discountType;
     }
 
     public void setDiscountValue(Integer discountValue) {

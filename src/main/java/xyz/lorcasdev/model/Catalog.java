@@ -1,6 +1,14 @@
 package xyz.lorcasdev.model;
 
+import java.util.Comparator;
+
 public class Catalog {
+
+    public static final Comparator<Catalog> BY_NAME
+            = Comparator.comparing(Catalog::getName, String.CASE_INSENSITIVE_ORDER);
+
+    public static final Comparator<Catalog> BY_PRICE
+            = Comparator.comparingInt(Catalog::getPrice);
 
     private final int id;
     private String name;
