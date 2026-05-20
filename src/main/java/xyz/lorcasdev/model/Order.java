@@ -2,12 +2,14 @@ package xyz.lorcasdev.model;
 
 import java.time.LocalDateTime;
 
+import xyz.lorcasdev.enums.OrderStatus;
+
 public class Order {
 
     private final int id;
-    private int customerId;
-    private int quoteId;
-    private String status;
+    private final Customer customer;
+    private final Quote quote;
+    private OrderStatus status;
     private int subtotal;
     private double discountAmount;
     private int total;
@@ -15,17 +17,15 @@ public class Order {
     private LocalDateTime startDate;
     private LocalDateTime estimatedDeliveryDate;
 
-    public Order(int id, int customerId, int quoteId, String status, int subtotal, double discountAmount, int total, LocalDateTime createdAt, LocalDateTime startDate, LocalDateTime estimatedDeliveryDate) {
+    public Order(int id, Customer customer, Quote quote, OrderStatus status, int subtotal, double discountAmount, int total, LocalDateTime createdAt, LocalDateTime startDate, LocalDateTime estimatedDeliveryDate) {
         Validator.positive(id, "id");
-        Validator.notNegative(customerId, "customer_id");
-        Validator.notEmpty(status, "status");
         Validator.positive(subtotal, "subtotal");
         Validator.positive(total, "total");
         Validator.notNull(createdAt, "created_at");
 
         this.id = id;
-        this.customerId = customerId;
-        this.quoteId = quoteId;
+        this.customer = customer;
+        this.quote = quote;
         this.status = status;
         this.subtotal = subtotal;
         this.discountAmount = discountAmount;
@@ -35,44 +35,46 @@ public class Order {
         this.estimatedDeliveryDate = estimatedDeliveryDate;
     }
 
-    public void updateOrder(String status, Integer subtotal, Double discountAmount, Integer total, LocalDateTime startDate, LocalDateTime estimatedDeliveryDate) {
-        if (status != null) {
-            Validator.notEmpty(status, "status");
-            this.status = status;
-        }
-        if (subtotal != null) {
-        	Validator.positive(subtotal, "subtotal");
-            this.subtotal = subtotal;
-        }
-        if (discountAmount != null) {
-        	Validator.notNegative(discountAmount, "discount_amount");
-            this.discountAmount = discountAmount;
-        }
-        if (total != null) {
-        	Validator.positive(total, "total");
-            this.total = total;
-        }
-        if (startDate != null) {
-            this.startDate = startDate;
-        }
-        if (estimatedDeliveryDate != null) {
-            this.estimatedDeliveryDate = estimatedDeliveryDate;
-        }
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public void setSubtotal(int subtotal) {
+        Validator.positive(subtotal, "subtotal");
+        this.subtotal = subtotal;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        Validator.notNegative(discountAmount, "discount_amount");
+        this.discountAmount = discountAmount;
+    }
+
+    public void setTotal(int total) {
+        Validator.positive(total, "total");
+        this.total = total;
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEstimatedDeliveryDate(LocalDateTime estimatedDeliveryDate) {
+        this.estimatedDeliveryDate = estimatedDeliveryDate;
     }
 
     public int getId() {
         return id;
     }
 
-    public int getCustomerId() {
-        return customerId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public Integer getQuoteId() {
-        return quoteId;
+    public Quote getQuote() {
+        return quote;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
@@ -102,6 +104,6 @@ public class Order {
 
     @Override
     public String toString() {
-        return String.format("Order[%d] - Customer: %d | Status: %s | Total: $%.2f", id, customerId, status, total);
+        return String.format("Order[%d] - Customer: %s | Status: %s | Total: $%d", id, customer.getName(), status, total);
     }
 }

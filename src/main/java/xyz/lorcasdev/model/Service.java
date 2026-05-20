@@ -10,10 +10,10 @@ public class Service {
     private double estimatedBaseHours;
 
     public Service(int id, String name, String description, int price, boolean isActive, double estimatedBaseHours) {
-        notNegativeInt(id, "id");
-        notEmptyString(name, "nombre");
-        notNegativeInt(price, "precio");
-        notNegativeDouble(estimatedBaseHours, "horas estimadas");
+        Validator.positive(id, "id");
+        Validator.notEmpty(name, "nombre");
+        Validator.positive(price, "precio");
+        Validator.notNegative(estimatedBaseHours, "horas estimadas");
 
         this.id = id;
         this.name = name;
@@ -23,47 +23,27 @@ public class Service {
         this.estimatedBaseHours = estimatedBaseHours;
     }
 
-    private static void notNegativeInt(int i, String field) {
-        if (i <= 0) {
-            throw new IllegalArgumentException("El campo " + field + " no puede ser 0, ni negativo");
-        }
+    public void setName(String name) {
+        Validator.notEmpty(name, "nombre");
+        this.name = name;
     }
 
-    private static void notEmptyString(String string, String field) {
-        if (string == null || string.isBlank()) {
-            throw new IllegalArgumentException("El campo " + field + " es obligatorio");
-        }
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    private static void notNegativeDouble(double i, String field) {
-        if (i < 0) {
-            throw new IllegalArgumentException("El campo " + field + " no puede ser negativo");
-        }
+    public void setPrice(int price) {
+        Validator.positive(price, "precio");
+        this.price = price;
     }
 
-    public void updateService(String name, String description, Integer price, Boolean isActive, Double estimatedBaseHours) {
-        if (name != null) {
-            notEmptyString(name, "nombre");
-            this.name = name;
-        }
+    public void setActive(boolean active) {
+        this.isActive = active;
+    }
 
-        if (description != null) {
-            this.description = description;
-        }
-
-        if (price != null) {
-            notNegativeInt(price, "precio");
-            this.price = price;
-        }
-
-        if (isActive != null) {
-            this.isActive = isActive;
-        }
-
-        if (estimatedBaseHours != null) {
-            notNegativeDouble(estimatedBaseHours, name);
-            this.estimatedBaseHours = estimatedBaseHours;
-        }
+    public void setEstimatedBaseHours(Double estimatedBaseHours) {
+        Validator.notNegative(estimatedBaseHours, "horas base estimadas");
+        this.estimatedBaseHours = estimatedBaseHours;
     }
 
     public int getId() {

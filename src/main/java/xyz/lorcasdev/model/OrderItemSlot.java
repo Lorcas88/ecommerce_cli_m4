@@ -3,39 +3,35 @@ package xyz.lorcasdev.model;
 public class OrderItemSlot {
 
     private final int id;
-    private int orderItemId;
-    private int slotId;
+    private final OrderItem orderItem;
+    private final AvailabilitySlot slot;
     private double assignedHours;
 
-    public OrderItemSlot(int id, int orderItemId, int slotId, double assignedHours) {
+    public OrderItemSlot(int id, OrderItem orderItem, AvailabilitySlot slot, double assignedHours) {
         Validator.positive(id, "id");
-        Validator.positive(orderItemId, "order_item_id");
-        Validator.positive(slotId, "slot_id");
         Validator.notNegative(assignedHours, "assigned_hours");
 
         this.id = id;
-        this.orderItemId = orderItemId;
-        this.slotId = slotId;
+        this.orderItem = orderItem;
+        this.slot = slot;
         this.assignedHours = assignedHours;
     }
 
-    public void updateOrderItemSlot(Double assignedHours) {
-        if (assignedHours != null) {
-            Validator.notNegative(assignedHours, "assigned_hours");
-            this.assignedHours = assignedHours;
-        }
+    public void setAssignedHours(double assignedHours) {
+        Validator.notNegative(assignedHours, "assigned_hours");
+        this.assignedHours = assignedHours;
     }
 
     public int getId() {
         return id;
     }
 
-    public int getOrderItemId() {
-        return orderItemId;
+    public OrderItem getOrderItem() {
+        return orderItem;
     }
 
-    public int getSlotId() {
-        return slotId;
+    public AvailabilitySlot getSlot() {
+        return slot;
     }
 
     public double getAssignedHours() {
@@ -44,6 +40,6 @@ public class OrderItemSlot {
 
     @Override
     public String toString() {
-        return String.format("OrderItemSlot[%d] - OrderItem: %d | Slot: %d | Hours: %.1f", id, orderItemId, slotId, assignedHours);
+        return String.format("OrderItemSlot[%d] - OrderItem: %d | Slot: %d | Hours: %.1f", id, orderItem.getId(), slot.getId(), assignedHours);
     }
 }

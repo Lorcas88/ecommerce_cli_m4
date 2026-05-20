@@ -9,6 +9,7 @@ public class Item {
     private double baseEstimatedHours;
     private boolean isActive;
 
+    // Constructor
     public Item(int id, String name, String description, int baseUnitPrice, double baseEstimatedHours, boolean isActive) {
         Validator.positive(id, "id");
         Validator.notEmpty(name, "nombre");
@@ -23,27 +24,31 @@ public class Item {
         this.isActive = isActive;
     }
 
-    public void updateItem(String name, String description, int baseUnitPrice, Double baseEstimatedHours, Boolean isActive) {
-        if (name != null) {
-            Validator.notEmpty(name, "nombre");
-            this.name = name;
-        }
-        if (description != null) {
-            this.description = description;
-        }
-        if (baseUnitPrice < 0) {
-            Validator.notNegative(baseUnitPrice, "precio unitario base");
-            this.baseUnitPrice = baseUnitPrice;
-        }
-        if (baseEstimatedHours != null) {
-            Validator.notNegative(baseEstimatedHours, "horas estimadas base");
-            this.baseEstimatedHours = baseEstimatedHours;
-        }
-        if (isActive != null) {
-            this.isActive = isActive;
-        }
+    // Setters
+    public void setName(String name) {
+        Validator.notEmpty(name, "nombre");
+        this.name = name;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setBaseUnitPrice(int baseUnitPrice) {
+        Validator.positive(baseUnitPrice, "precio unitario base");
+        this.baseUnitPrice = baseUnitPrice;
+    }
+
+    public void setBaseEstimatedHours(double baseEstimatedHours) {
+        Validator.notNegative(baseEstimatedHours, "horas estimadas base");
+        this.baseEstimatedHours = baseEstimatedHours;
+    }
+
+    public void setActive(boolean active) {
+        this.isActive = active;
+    }
+
+    // Getters
     public int getId() {
         return id;
     }

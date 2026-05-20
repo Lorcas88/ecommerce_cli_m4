@@ -10,6 +10,7 @@ public class AvailabilitySlot {
     private double reservedHours;
     private int priorityLevel;
 
+    // Constructor
     public AvailabilitySlot(int id, LocalDate slotDate, double totalHours, double reservedHours, int priorityLevel) {
         Validator.positive(id, "id");
         Validator.notNull(slotDate, "slot_date");
@@ -23,23 +24,27 @@ public class AvailabilitySlot {
         this.priorityLevel = priorityLevel;
     }
 
-    public void updateAvailabilitySlot(LocalDate slotDate, Double totalHours, Double reservedHours, Integer priorityLevel) {
-        if (slotDate != null) {
-            this.slotDate = slotDate;
-        }
-        if (totalHours != null) {
-            Validator.notNegative(totalHours, "total_hours");
-            this.totalHours = totalHours;
-        }
-        if (reservedHours != null) {
-            Validator.notNegative(reservedHours, "reserved_hours");
-            this.reservedHours = reservedHours;
-        }
-        if (priorityLevel != null) {
-            this.priorityLevel = priorityLevel;
-        }
+    // Setters
+    public void setSlotDate(LocalDate slotDate) {
+        Validator.notNull(slotDate, "slot_date");
+        this.slotDate = slotDate;
     }
 
+    public void setTotalHours(double totalHours) {
+        Validator.notNegative(totalHours, "total_hours");
+        this.totalHours = totalHours;
+    }
+
+    public void setReservedHours(double reservedHours) {
+        Validator.notNegative(reservedHours, "reserved_hours");
+        this.reservedHours = reservedHours;
+    }
+
+    public void setPriorityLevel(int priorityLevel) {
+        this.priorityLevel = priorityLevel;
+    }
+
+    // Getters
     public int getId() {
         return id;
     }

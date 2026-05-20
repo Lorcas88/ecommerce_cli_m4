@@ -2,26 +2,26 @@ package xyz.lorcasdev.model;
 
 import java.time.LocalDateTime;
 
+import xyz.lorcasdev.enums.PaymentMethod;
+import xyz.lorcasdev.enums.PaymentStatus;
+
 public class Payment {
 
     private final int id;
-    private int orderId;
+    private final Order order;
     private LocalDateTime paymentDate;
     private final int amount;
-    private String paymentMethod;
-    private String status;
+    private PaymentMethod paymentMethod;
+    private PaymentStatus status;
     private String transactionReference;
 
-    public Payment(int id, int orderId, LocalDateTime paymentDate, int amount, String paymentMethod, String status, String transactionReference) {
+    public Payment(int id, Order order, LocalDateTime paymentDate, int amount, PaymentMethod paymentMethod, PaymentStatus status, String transactionReference) {
         Validator.positive(id, "id");
-        Validator.positive(orderId, "order_id");
         Validator.notNull(paymentDate, "payment_date");
         Validator.positive(amount, "amount");
-        Validator.notEmpty(paymentMethod, "payment_method");
-        Validator.notEmpty(status, "status");
 
         this.id = id;
-        this.orderId = orderId;
+        this.order = order;
         this.paymentDate = paymentDate;
         this.amount = amount;
         this.paymentMethod = paymentMethod;
@@ -29,29 +29,29 @@ public class Payment {
         this.transactionReference = transactionReference;
     }
 
-    public void updatePayment(LocalDateTime paymentDate, String paymentMethod, String status, String transactionReference) {
-        if (paymentDate != null) {
-            this.paymentDate = paymentDate;
-        }
-        if (paymentMethod != null) {
-        	Validator.notEmpty(paymentMethod, "payment_method");
-            this.paymentMethod = paymentMethod;
-        }
-        if (status != null) {
-        	Validator.notEmpty(status, "status");
-            this.status = status;
-        }
-        if (transactionReference != null) {
-            this.transactionReference = transactionReference;
-        }
+    public void setPaymentDate(LocalDateTime paymentDate) {
+        Validator.notNull(paymentDate, "payment_date");
+        this.paymentDate = paymentDate;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
+    }
+
+    public void setTransactionReference(String transactionReference) {
+        this.transactionReference = transactionReference;
     }
 
     public int getId() {
         return id;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public Order getOrder() {
+        return order;
     }
 
     public LocalDateTime getPaymentDate() {
@@ -62,11 +62,11 @@ public class Payment {
         return amount;
     }
 
-    public String getPaymentMethod() {
+    public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
 
-    public String getStatus() {
+    public PaymentStatus getStatus() {
         return status;
     }
 
@@ -76,6 +76,6 @@ public class Payment {
 
     @Override
     public String toString() {
-        return String.format("Payment[%d] - Order: %d | Amount: $%.2f | Status: %s", id, orderId, amount, status);
+        return String.format("Payment[%d] - Order: %d | Amount: $%d | Status: %s", id, order.getId(), amount, status);
     }
 }

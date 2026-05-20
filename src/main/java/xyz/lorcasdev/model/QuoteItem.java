@@ -3,59 +3,58 @@ package xyz.lorcasdev.model;
 public class QuoteItem {
 
     private final int id;
-    private int quoteId;
-    private int serviceItemId;
+    private final Quote quote;
+    private final ServiceItem serviceItem;
     private int quantity;
     private int unitPrice;
     private double estimatedHours;
     private int lineTotal;
 
-    public QuoteItem(int id, int quoteId, int serviceItemId, int quantity, int unitPrice, double estimatedHours, int lineTotal) {
+    public QuoteItem(int id, Quote quote, ServiceItem serviceItem, int quantity, int unitPrice, double estimatedHours, int lineTotal) {
         Validator.positive(id, "id");
-        Validator.positive(quoteId, "quote_id");
-        Validator.positive(serviceItemId, "service_item_id");
         Validator.notNegative(quantity, "quantity");
         Validator.positive(unitPrice, "unit_price");
         Validator.positive(lineTotal, "line_total");
 
         this.id = id;
-        this.quoteId = quoteId;
-        this.serviceItemId = serviceItemId;
+        this.quote = quote;
+        this.serviceItem = serviceItem;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.estimatedHours = estimatedHours;
         this.lineTotal = lineTotal;
     }
 
-    public void updateQuoteItem(Integer quantity, Integer unitPrice, Double estimatedHours, Integer lineTotal) {
-        if (quantity != null) {
-            Validator.positive(quantity, "quantity");
-            this.quantity = quantity;
-        }
-        if (unitPrice != null) {
-            Validator.positive(unitPrice, "unit_price");
-            this.unitPrice = unitPrice;
-        }
-        if (estimatedHours != null) {
-            Validator.notNegative(estimatedHours, "estimated_hours");
-            this.estimatedHours = estimatedHours;
-        }
-        if (lineTotal != null) {
-            Validator.positive(lineTotal, "line_total");
-            this.lineTotal = lineTotal;
-        }
+    public void setQuantity(int quantity) {
+        Validator.notNegative(quantity, "quantity");
+        this.quantity = quantity;
+    }
+
+    public void setUnitPrice(int unitPrice) {
+        Validator.positive(unitPrice, "unit_price");
+        this.unitPrice = unitPrice;
+    }
+
+    public void setEstimatedHours(double estimatedHours) {
+        Validator.notNegative(estimatedHours, "estimated_hours");
+        this.estimatedHours = estimatedHours;
+    }
+
+    public void setLineTotal(int lineTotal) {
+        Validator.positive(lineTotal, "line_total");
+        this.lineTotal = lineTotal;
     }
 
     public int getId() {
         return id;
     }
 
-    public int getQuoteId() {
-        return quoteId;
+    public Quote getQuote() {
+        return quote;
     }
 
-    public int getServiceItemId() {
-        return serviceItemId;
+    public ServiceItem getServiceItem() {
+        return serviceItem;
     }
 
     public int getQuantity() {
@@ -76,6 +75,6 @@ public class QuoteItem {
 
     @Override
     public String toString() {
-        return String.format("QuoteItem[%d] - Quote: %d | Cantidad: %d | Total Línea: $%.2f", id, quoteId, quantity, lineTotal);
+        return String.format("QuoteItem[%d] - Quote: %d | Cantidad: %d | Total Línea: $%d", id, quote.getId(), quantity, lineTotal);
     }
 }

@@ -13,6 +13,7 @@ public class Customer {
     private String address;
     private final LocalDateTime createdAt;
 
+    // Constructor
     public Customer(int id, String name, String lastName, String email, String phone, String companyName, String address, LocalDateTime createdAt) {
         Validator.notNegative(id, "id");
         Validator.notEmpty(name, "nombre");
@@ -30,40 +31,41 @@ public class Customer {
         this.createdAt = createdAt;
     }
 
-    public void updateCustomer(String name, String lastName, String email, String phone, String companyName, String address) {
-        if (name != null) {
-            Validator.notEmpty(name, "nombre");
-            this.name = name;
-        }
-        if (lastName != null) {
-            Validator.notEmpty(lastName, "apellido");
-            this.lastName = lastName;
-        }
-        if (email != null) {
-            Validator.notEmpty(email, "email");
-            this.email = email;
-        }
-        if (phone != null) {
-            this.phone = phone;
-        }
-        if (companyName != null) {
-            this.companyName = companyName;
-        }
-        if (address != null) {
-            this.address = address;
-        }
+    // Setters
+    public void setName(String name) {
+        Validator.notEmpty(name, "nombre");
+        this.name = name;
     }
 
+    public void setLastName(String lastName) {
+        Validator.notEmpty(lastName, "apellido");
+        this.lastName = lastName;
+    }
+
+    public void setEmail(String email) {
+        Validator.notEmpty(email, "email");
+        this.email = email;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    // Getters
     public int getId() {
         return id;
     }
 
     public String getName() {
-        return name;
-    }
-
-    public String getLastName() {
-        return lastName;
+        return name + " " + lastName;
     }
 
     public String getEmail() {

@@ -1,20 +1,19 @@
 package xyz.lorcasdev.model;
 
+import xyz.lorcasdev.enums.ComplexityLevel;
+
 public class ServiceItem {
 
     private final int id;
-    private int serviceId;
-    private int itemId;
+    private final Service service;
+    private final Item item;
     private boolean isDefault;
-    private String complexityLevel;
+    private final ComplexityLevel complexityLevel;
     private Integer priceOverride;
     private Double hoursOverride;
 
-    public ServiceItem(int id, int serviceId, int itemId, boolean isDefault, String complexityLevel, Integer priceOverride, Double hoursOverride) {
+    public ServiceItem(int id, Service service, Item item, boolean isDefault, ComplexityLevel complexityLevel, Integer priceOverride, Double hoursOverride) {
         Validator.positive(id, "id");
-        Validator.positive(serviceId, "service_id");
-        Validator.positive(itemId, "item_id");
-        Validator.notEmpty(complexityLevel, "nivel de complejidad");
         if (priceOverride != null) {
             Validator.positive(priceOverride, "sobreescritura de precio");
         }
@@ -23,57 +22,49 @@ public class ServiceItem {
         }
 
         this.id = id;
-        this.serviceId = serviceId;
-        this.itemId = itemId;
+        this.service = service;
+        this.item = item;
         this.isDefault = isDefault;
         this.complexityLevel = complexityLevel;
         this.priceOverride = priceOverride;
         this.hoursOverride = hoursOverride;
     }
 
-    public void updateServiceItem(Integer serviceId, Integer itemId, Boolean isDefault, String complexityLevel, Integer priceOverride, Double hoursOverride) {
-        if (serviceId != null) {
-        	Validator.positive(serviceId, "service_id");
-            this.serviceId = serviceId;
-        }
-        if (itemId != null) {
-        	Validator.positive(itemId, "item_id");
-            this.itemId = itemId;
-        }
-        if (isDefault != null) {
-            this.isDefault = isDefault;
-        }
-        if (complexityLevel != null) {
-        	Validator.notEmpty(complexityLevel, "nivel de complejidad");
-            this.complexityLevel = complexityLevel;
-        }
+    public void setDefault(boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+
+    public void setPriceOverride(Integer priceOverride) {
         if (priceOverride != null) {
-        	Validator.positive(priceOverride, "sobreescritura de precio");
-            this.priceOverride = priceOverride;
+            Validator.positive(priceOverride, "sobreescritura de precio");
         }
+        this.priceOverride = priceOverride;
+    }
+
+    public void setHoursOverride(Double hoursOverride) {
         if (hoursOverride != null) {
-        	Validator.notNegative(hoursOverride, "sobreescritura de horas");
-            this.hoursOverride = hoursOverride;
+            Validator.notNegative(hoursOverride, "sobreescritura de horas");
         }
+        this.hoursOverride = hoursOverride;
     }
 
     public int getId() {
         return id;
     }
 
-    public int getServiceId() {
-        return serviceId;
+    public Service getService() {
+        return service;
     }
 
-    public int getItemId() {
-        return itemId;
+    public Item getItem() {
+        return item;
     }
 
     public boolean isDefault() {
         return isDefault;
     }
 
-    public String getComplexityLevel() {
+    public ComplexityLevel getComplexityLevel() {
         return complexityLevel;
     }
 
@@ -87,6 +78,6 @@ public class ServiceItem {
 
     @Override
     public String toString() {
-        return String.format("ServiceItem[%d] - Service: %d, Item: %d (%s)", id, serviceId, itemId, complexityLevel);
+        return String.format("ServiceItem[%d] - Service: %s, Item: %s (%s)", id, service.getName(), item.getName(), complexityLevel);
     }
 }
