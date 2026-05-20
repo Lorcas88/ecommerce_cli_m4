@@ -23,8 +23,8 @@ public class Quote {
 
     public Quote(int id, Customer customer, String guestName, String guestEmail, String guestPhone, QuoteStatus status, DiscountType discountType, int discountValue, int discountAmount, int subtotal, int total, LocalDateTime createdAt, LocalDateTime validUntil) {
         Validator.positive(id, "id");
-        Validator.positive(subtotal, "subtotal");
-        Validator.positive(total, "total");
+        Validator.notNegative(subtotal, "subtotal");
+        Validator.notNegative(total, "total");
         Validator.notNull(createdAt, "created_at");
 
         this.id = id;
@@ -67,12 +67,12 @@ public class Quote {
     }
 
     public void setSubtotal(int subtotal) {
-        Validator.positive(subtotal, "subtotal");
+        Validator.notNegative(subtotal, "subtotal");
         this.subtotal = subtotal;
     }
 
     public void setTotal(int total) {
-        Validator.positive(total, "total");
+        Validator.notNegative(total, "total");
         this.total = total;
     }
 

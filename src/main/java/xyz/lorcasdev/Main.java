@@ -14,6 +14,7 @@ import xyz.lorcasdev.service.DiscountService;
 import xyz.lorcasdev.service.OrderService;
 import xyz.lorcasdev.service.QuoteService;
 import xyz.lorcasdev.service.TiendaService;
+import xyz.lorcasdev.util.DataSeeder;
 import xyz.lorcasdev.ui.AdminMenu;
 import xyz.lorcasdev.ui.UserMenu;
 
@@ -35,6 +36,9 @@ public class Main {
         OrderService orderService = new OrderService(orderRepository, orderItemRepository);
         TiendaService tiendaService = new TiendaService(quoteService, orderService, quoteRepository, quoteItemRepository);
         DiscountService discountService = new DiscountService();
+
+        // 3. Cargar datos de prueba
+        DataSeeder.cargarDatosEjemplo(catalogService);
 
         // 3. Iniciar la interfaz de usuario
         try (Scanner scanner = new Scanner(System.in)) {

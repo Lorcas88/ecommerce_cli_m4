@@ -19,8 +19,8 @@ public class Order {
 
     public Order(int id, Customer customer, Quote quote, OrderStatus status, int subtotal, double discountAmount, int total, LocalDateTime createdAt, LocalDateTime startDate, LocalDateTime estimatedDeliveryDate) {
         Validator.positive(id, "id");
-        Validator.positive(subtotal, "subtotal");
-        Validator.positive(total, "total");
+        Validator.notNegative(subtotal, "subtotal");
+        Validator.notNegative(total, "total");
         Validator.notNull(createdAt, "created_at");
 
         this.id = id;
@@ -40,7 +40,7 @@ public class Order {
     }
 
     public void setSubtotal(int subtotal) {
-        Validator.positive(subtotal, "subtotal");
+        Validator.notNegative(subtotal, "subtotal");
         this.subtotal = subtotal;
     }
 
@@ -50,7 +50,7 @@ public class Order {
     }
 
     public void setTotal(int total) {
-        Validator.positive(total, "total");
+        Validator.notNegative(total, "total");
         this.total = total;
     }
 
