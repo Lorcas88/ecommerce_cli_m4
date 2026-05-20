@@ -104,6 +104,7 @@ public class Order {
 
     @Override
     public String toString() {
-        return String.format("Order[%d] - Customer: %s | Status: %s | Total: $%d", id, customer.getName(), status, total);
+        String customerName = customer != null ? customer.getName() : quote.getGuestName();
+        return String.format("Order[%d] - Customer: %s | Status: %s | Total: $%d", id, customerName, status, total);
     }
 }

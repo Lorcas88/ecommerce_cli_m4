@@ -4,11 +4,11 @@ import java.time.LocalDateTime;
 
 import xyz.lorcasdev.enums.QuoteStatus;
 import xyz.lorcasdev.exception.EmptyCartException;
+import xyz.lorcasdev.model.CatalogItem;
 import xyz.lorcasdev.model.Customer;
 import xyz.lorcasdev.model.Order;
 import xyz.lorcasdev.model.Quote;
 import xyz.lorcasdev.model.QuoteItem;
-import xyz.lorcasdev.model.CatalogItem;
 import xyz.lorcasdev.repository.QuoteItemRepository;
 import xyz.lorcasdev.repository.QuoteRepository;
 
@@ -23,11 +23,11 @@ public class QuoteService {
     }
 
     public Quote createQuote(Customer customer) {
-        return createQuote(customer, null, null, null, null);
+        return createQuote(customer, null, null, null, QuoteStatus.DRAFT);
     }
 
     public Quote createGuestQuote(String guestName, String guestEmail, String guestPhone) {
-        return createQuote(null, guestName, guestEmail, guestPhone, null);
+        return createQuote(null, guestName, guestEmail, guestPhone, QuoteStatus.DRAFT);
     }
 
     public Quote createQuote(Customer customer, String guestName, String guestEmail, String guestPhone, QuoteStatus status) {

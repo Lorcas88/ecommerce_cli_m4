@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
+import xyz.lorcasdev.enums.OrderStatus;
 import xyz.lorcasdev.model.CatalogItem;
 import xyz.lorcasdev.model.Order;
 import xyz.lorcasdev.model.Quote;
@@ -133,8 +134,8 @@ public class UserMenu {
             return;
         }
         System.out.println("Confirmando su cotización y generando la orden de compra...");
-        // Pasamos 'null' como status asumiendo que el constructor de Order acepta null o que no hay un OrderStatus.PENDING definido en contexto
-        Order order = tiendaService.confirmQuoteAndCreateOrder(currentQuote.getId(), null, LocalDateTime.now().plusDays(7));
+
+        Order order = tiendaService.confirmQuoteAndCreateOrder(currentQuote.getId(), OrderStatus.IN_PROGRESS, LocalDateTime.now().plusDays(7));
         System.out.println("¡Orden generada con éxito!");
         System.out.println(order);
 
