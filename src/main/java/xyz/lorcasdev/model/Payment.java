@@ -58,7 +58,7 @@ public class Payment {
         return paymentDate;
     }
 
-    public double getAmount() {
+    public int getAmount() {
         return amount;
     }
 

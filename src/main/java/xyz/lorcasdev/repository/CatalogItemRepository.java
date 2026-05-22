@@ -17,11 +17,11 @@ public class CatalogItemRepository {
     private int counter = 1;
 
     public CatalogItem save(Catalog catalog, Item item,
-            boolean isDefault, boolean isActive,
+            Boolean isOptional, Boolean isActive,
             ComplexityLevel complexityLevel,
             Integer priceOverride, Double hoursOverride) {
         int id = counter++;
-        CatalogItem catalogItem = new CatalogItem(id, catalog, item, isDefault, isActive, complexityLevel, priceOverride, hoursOverride);
+        CatalogItem catalogItem = new CatalogItem(id, catalog, item, isOptional, isActive, complexityLevel, priceOverride, hoursOverride);
         catalogItems.put(id, catalogItem);
         return catalogItem;
     }

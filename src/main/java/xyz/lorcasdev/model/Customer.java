@@ -2,6 +2,8 @@ package xyz.lorcasdev.model;
 
 import java.time.LocalDateTime;
 
+// Esta entidad será usada cuando se deba crear el backend como tal
+// Por ahora solo cumple con existir para tenerla en consideración
 public class Customer {
 
     private final int id;

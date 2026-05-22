@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Scanner;
 
 import xyz.lorcasdev.enums.OrderStatus;
+import xyz.lorcasdev.model.Catalog;
 import xyz.lorcasdev.model.CatalogItem;
 import xyz.lorcasdev.model.Order;
 import xyz.lorcasdev.model.Quote;
+import xyz.lorcasdev.model.QuoteItem;
 import xyz.lorcasdev.service.CatalogService;
 import xyz.lorcasdev.service.DiscountService;
 import xyz.lorcasdev.service.QuoteService;
@@ -35,12 +37,13 @@ public class UserMenu {
         boolean exit = false;
         while (!exit) {
             System.out.println("\n=== Menú de Usuario (Tienda) ===");
-            System.out.println("1. Explorar catálogo de servicios disponibles");
-            System.out.println("2. Agregar servicio a la cotización");
+            System.out.println("1. Explorar catálogos de servicios");
+            System.out.println("2. Agregar servicio (Catálogo) a la cotización");
             System.out.println("3. Ver mi cotización actual");
-            System.out.println("4. Eliminar servicio de la cotización");
-            System.out.println("5. Ver descuentos activos");
-            System.out.println("6. Confirmar cotización (Crear Orden)");
+            System.out.println("4. Añadir ítem opcional a un servicio cotizado");
+            System.out.println("5. Eliminar ítem de la cotización");
+            System.out.println("6. Ver descuentos activos");
+            System.out.println("7. Confirmar cotización (Crear Orden)");
             System.out.println("0. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
 
@@ -51,14 +54,16 @@ public class UserMenu {
                     case "1" ->
                         browseCatalog();
                     case "2" ->
-                        addToQuote();
+                        addCatalogToQuote();
                     case "3" ->
                         viewQuote();
                     case "4" ->
-                        removeFromQuote();
+                        addOptionalItemToQuote();
                     case "5" ->
-                        viewDiscounts();
+                        removeFromQuote();
                     case "6" ->
+                        viewDiscounts();
+                    case "7" ->
                         confirmQuote();
                     case "0" ->
                         exit = true;
@@ -74,16 +79,16 @@ public class UserMenu {
     }
 
     private void browseCatalog() {
-        System.out.println("\n--- Catálogo de Servicios Disponibles ---");
-        List<CatalogItem> items = catalogService.findAvailableCatalogItems();
-        if (items.isEmpty()) {
-            System.out.println("No hay servicios disponibles en este momento.");
+        System.out.println("\n--- Catálogos de Servicios Disponibles ---");
+        List<Catalog> catalogs = catalogService.findActiveCatalogs();
+        if (catalogs.isEmpty()) {
+            System.out.println("No hay catálogos disponibles en este momento.");
         } else {
-            items.forEach(System.out::println);
+            catalogs.forEach(System.out::println);
         }
     }
 
-    private void addToQuote() {
+    private void addCatalogToQuote() {
         if (currentQuote == null) {
             System.out.print("Ingrese su nombre para iniciar la cotización: ");
             String name = scanner.nextLine();
@@ -91,15 +96,27 @@ public class UserMenu {
             System.out.println("¡Cotización iniciada para " + name + "!");
         }
 
-        System.out.print("Ingrese el ID del servicio (CatalogItem) que desea agregar: ");
-        int itemId = Integer.parseInt(scanner.nextLine());
-        CatalogItem item = catalogService.findCatalogItemById(itemId);
+        System.out.print("Ingrese el ID del servicio (Catálogo) que desea agregar: ");
+        int catalogId = Integer.parseInt(scanner.nextLine());
+        Catalog catalog = catalogService.findCatalogById(catalogId);
 
-        System.out.print("Ingrese la cantidad: ");
+        System.out.print("Ingrese la cantidad de este servicio: ");
         int qty = Integer.parseInt(scanner.nextLine());
 
-        quoteService.addItemToQuote(currentQuote.getId(), item, qty);
-        System.out.println("¡Servicio agregado a su cotización!");
+        List<CatalogItem> mandatoryItems = catalogService.searchCatalogItemsByCatalog(catalog.getId())
+                .stream()
+                .filter(ci -> !ci.isOptional() && ci.isActive())
+                .toList();
+
+        if (mandatoryItems.isEmpty()) {
+            System.out.println("Este servicio no tiene ítems obligatorios activos para agregar.");
+            return;
+        }
+
+        for (CatalogItem item : mandatoryItems) {
+            quoteService.addItemToQuote(currentQuote.getId(), item, qty);
+        }
+        System.out.println("¡Servicio '" + catalog.getName() + "' y sus ítems obligatorios agregados a su cotización!");
     }
 
     private void viewQuote() {
@@ -109,14 +126,76 @@ public class UserMenu {
         }
         System.out.println("\n--- Mi Cotización ---");
         System.out.println(currentQuote);
-        System.out.println("Subtotal (sin descuentos): $" + quoteService.calculateSubtotal(currentQuote.getId()));
-        System.out.println("Horas estimadas: " + quoteService.calculateEstimatedHours(currentQuote.getId()) + " hrs");
+
+        List<QuoteItem> items = quoteService.getQuoteItems(currentQuote.getId());
+        if (items.isEmpty()) {
+            System.out.println("La cotización está vacía.");
+        } else {
+            System.out.println("Ítems en la cotización:");
+            items.forEach(System.out::println);
+        }
+
+        System.out.println("Subtotal (sin descuentos): $" + currentQuote.getSubtotal());
+        System.out.println("Horas estimadas: " + currentQuote.getEstimatedHours() + " hrs");
+    }
+
+    private void addOptionalItemToQuote() {
+        if (currentQuote == null) {
+            System.out.println("Aún no tiene una cotización activa.");
+            return;
+        }
+
+        System.out.print("Ingrese el ID del servicio (Catálogo) al cual desea agregarle ítems opcionales: ");
+        int catalogId = Integer.parseInt(scanner.nextLine());
+
+        List<CatalogItem> optionalItems = catalogService.searchCatalogItemsByCatalog(catalogId)
+                .stream()
+                .filter(ci -> ci.isOptional() && ci.isActive())
+                .toList();
+
+        if (optionalItems.isEmpty()) {
+            System.out.println("Este servicio no tiene ítems opcionales disponibles.");
+            return;
+        }
+
+        System.out.println("--- Ítems Opcionales Disponibles ---");
+        optionalItems.forEach(System.out::println);
+
+        System.out.print("Ingrese el ID del ítem opcional (CatalogItem) que desea agregar: ");
+        int itemId = Integer.parseInt(scanner.nextLine());
+        CatalogItem itemToAdd = catalogService.findCatalogItemById(itemId);
+
+        if (!itemToAdd.isOptional() || itemToAdd.getCatalog().getId() != catalogId) {
+            System.out.println("El ítem seleccionado no es un ítem opcional válido para este servicio.");
+            return;
+        }
+
+        System.out.print("Ingrese la cantidad: ");
+        int qty = Integer.parseInt(scanner.nextLine());
+
+        quoteService.addItemToQuote(currentQuote.getId(), itemToAdd, qty);
+        System.out.println("¡Ítem opcional agregado a su cotización!");
     }
 
     private void removeFromQuote() {
         if (currentQuote == null) {
+            System.out.println("Aún no tiene una cotización activa.");
             return;
         }
+
+        List<QuoteItem> items = quoteService.getQuoteItems(currentQuote.getId());
+        List<QuoteItem> removableItems = items.stream()
+                .filter(qi -> qi.getCatalogItem().isOptional())
+                .toList();
+
+        if (removableItems.isEmpty()) {
+            System.out.println("No hay ítems opcionales en su cotización que puedan ser eliminados.");
+            return;
+        }
+
+        System.out.println("\n--- Ítems opcionales que puede eliminar ---");
+        removableItems.forEach(System.out::println);
+
         System.out.print("Ingrese el ID del ítem en su cotización (QuoteItem) que desea eliminar: ");
         int quoteItemId = Integer.parseInt(scanner.nextLine());
         quoteService.removeItemFromQuote(quoteItemId);

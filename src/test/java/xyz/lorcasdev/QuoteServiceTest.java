@@ -33,7 +33,7 @@ class QuoteServiceTest {
         Quote quote = quoteService.createGuestQuote("Guest User", "guest@test.com", "123456789");
 
         // Setup de elementos simulados
-        Catalog catalog = new Catalog(1, "Catálogo Prueba", "Desc", 100, true, 10);
+        Catalog catalog = new Catalog(1, "Catálogo Prueba", "Desc", true, 10);
         Item item = new Item(1, "Item Prueba", "Desc", 50, 5, true);
         CatalogItem cItem1 = new CatalogItem(1, catalog, item, true, true, ComplexityLevel.LOW, 100, null);
         CatalogItem cItem2 = new CatalogItem(2, catalog, item, true, true, ComplexityLevel.LOW, 250, null);
@@ -50,7 +50,7 @@ class QuoteServiceTest {
     @Test
     void testUpdateQuantityValidation() {
         Quote quote = quoteService.createGuestQuote("Guest User", "guest@test.com", "123456789");
-        Catalog catalog = new Catalog(1, "Catálogo Prueba", "Desc", 100, true, 10);
+        Catalog catalog = new Catalog(1, "Catálogo Prueba", "Desc", true, 10);
         Item item = new Item(1, "Item Prueba", "Desc", 50, 5, true);
         CatalogItem cItem = new CatalogItem(1, catalog, item, true, true, ComplexityLevel.LOW, 100, null);
 

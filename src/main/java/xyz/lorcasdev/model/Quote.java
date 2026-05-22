@@ -12,12 +12,13 @@ public class Quote {
     private String guestName;
     private String guestEmail;
     private String guestPhone;
-    private final QuoteStatus status;
+    private QuoteStatus status;
     private DiscountType discountType;
     private Integer discountValue;
     private Integer discountAmount;
     private int subtotal;
     private int total;
+    private double estimatedHours;
     private final LocalDateTime createdAt;
     private LocalDateTime validUntil;
 
@@ -38,6 +39,7 @@ public class Quote {
         this.discountAmount = discountAmount;
         this.subtotal = subtotal;
         this.total = total;
+        this.estimatedHours = 0.0;
         this.createdAt = createdAt;
         this.validUntil = validUntil;
     }
@@ -52,6 +54,10 @@ public class Quote {
 
     public void setGuestPhone(String guestPhone) {
         this.guestPhone = guestPhone;
+    }
+
+    public void setStatus(QuoteStatus status) {
+        this.status = status;
     }
 
     public void setDiscountType(DiscountType discountType) {
@@ -74,6 +80,11 @@ public class Quote {
     public void setTotal(int total) {
         Validator.notNegative(total, "total");
         this.total = total;
+    }
+
+    public void setEstimatedHours(double estimatedHours) {
+        Validator.notNegative(estimatedHours, "horas estimadas");
+        this.estimatedHours = estimatedHours;
     }
 
     public void setValidUntil(LocalDateTime validUntil) {
@@ -116,12 +127,16 @@ public class Quote {
         return discountAmount;
     }
 
-    public double getSubtotal() {
+    public int getSubtotal() {
         return subtotal;
     }
 
-    public double getTotal() {
+    public int getTotal() {
         return total;
+    }
+
+    public double getEstimatedHours() {
+        return estimatedHours;
     }
 
     public LocalDateTime getCreatedAt() {

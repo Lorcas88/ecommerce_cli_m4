@@ -1,6 +1,7 @@
 package xyz.lorcasdev.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import xyz.lorcasdev.enums.QuoteStatus;
 import xyz.lorcasdev.exception.EmptyCartException;
@@ -51,22 +52,54 @@ public class QuoteService {
         QuoteItem quoteItem = quoteItemRepository.save(quote, catalogItem, quantity, unitPrice, estimatedHours, lineTotal);
 
         // Actualizamos los totales de la cotización
-        quote.setSubtotal((int) quote.getSubtotal() + lineTotal);
-        quote.setTotal((int) quote.getTotal() + lineTotal);
-        quoteRepository.update(quote);
+        recalculateQuoteTotals(quote);
+        recalculateQuoteHours(quote);
 
         return quoteItem;
     }
 
     public void removeItemFromQuote(int quoteItemId) {
+        QuoteItem quoteItem = quoteItemRepository.findById(quoteItemId);
+
+        if (!quoteItem.getCatalogItem().isOptional()) {
+            throw new IllegalArgumentException("No se puede eliminar un ítem obligatorio de la cotización.");
+        }
+
         quoteItemRepository.delete(quoteItemId);
+
+        recalculateQuoteTotals(quoteItem.getQuote());
+        recalculateQuoteHours(quoteItem.getQuote());
     }
 
     public QuoteItem updateItemQuantity(int quoteItemId, int newQuantity) {
         QuoteItem quoteItem = quoteItemRepository.findById(quoteItemId);
         quoteItem.setQuantity(newQuantity);
         quoteItem.setLineTotal((int) (quoteItem.getUnitPrice() * newQuantity));
-        return quoteItemRepository.update(quoteItem);
+        QuoteItem updated = quoteItemRepository.update(quoteItem);
+
+        recalculateQuoteTotals(quoteItem.getQuote());
+        recalculateQuoteHours(quoteItem.getQuote());
+
+        return updated;
+    }
+
+    public void recalculateQuoteTotals(Quote quote) {
+        int subtotal = calculateSubtotal(quote.getId());
+        quote.setSubtotal(subtotal);
+        quote.setTotal(subtotal - (quote.getDiscountAmount() != null ? quote.getDiscountAmount() : 0));
+        quoteRepository.update(quote);
+    }
+
+    public void recalculateQuoteHours(Quote quote) {
+        double totalHours = calculateEstimatedHours(quote.getId());
+        quote.setEstimatedHours(totalHours);
+        quoteRepository.update(quote);
+    }
+
+    public List<QuoteItem> getQuoteItems(int quoteId) {
+        return quoteItemRepository.findAll().stream()
+                .filter(qi -> qi.getQuote().getId() == quoteId)
+                .toList();
     }
 
     public void enableOptionalItem(int quoteItemId) {

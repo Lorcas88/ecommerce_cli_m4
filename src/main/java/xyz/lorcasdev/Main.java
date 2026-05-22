@@ -21,7 +21,7 @@ import xyz.lorcasdev.ui.UserMenu;
 public class Main {
 
     public static void main(String[] args) {
-        // 1. Inicializar repositorios
+        // Inicializar repositorios
         CatalogRepository catalogRepository = new CatalogRepository();
         ItemRepository itemRepository = new ItemRepository();
         CatalogItemRepository catalogItemRepository = new CatalogItemRepository();
@@ -30,17 +30,17 @@ public class Main {
         OrderRepository orderRepository = new OrderRepository();
         OrderItemRepository orderItemRepository = new OrderItemRepository();
 
-        // 2. Inicializar servicios de negocio
+        // Inicializar servicios de negocio
         CatalogService catalogService = new CatalogService(catalogRepository, itemRepository, catalogItemRepository);
         QuoteService quoteService = new QuoteService(quoteRepository, quoteItemRepository);
         OrderService orderService = new OrderService(orderRepository, orderItemRepository);
         DiscountService discountService = new DiscountService();
         TiendaService tiendaService = new TiendaService(quoteService, orderService, quoteRepository, quoteItemRepository, discountService);
 
-        // 3. Cargar datos de prueba
+        // Cargar datos de prueba
         DataSeeder.cargarDatosEjemplo(catalogService);
 
-        // 3. Iniciar la interfaz de usuario
+        // Iniciar la interfaz de usuario
         try (Scanner scanner = new Scanner(System.in)) {
             AdminMenu adminMenu = new AdminMenu(catalogService, scanner);
             UserMenu userMenu = new UserMenu(catalogService, quoteService, tiendaService, discountService, scanner);

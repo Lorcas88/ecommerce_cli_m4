@@ -1,14 +1,6 @@
 package xyz.lorcasdev.model;
 
-import java.util.Comparator;
-
 public class Catalog {
-
-    public static final Comparator<Catalog> BY_NAME
-            = Comparator.comparing(Catalog::getName, String.CASE_INSENSITIVE_ORDER);
-
-    public static final Comparator<Catalog> BY_PRICE
-            = Comparator.comparingInt(Catalog::getPrice);
 
     private final int id;
     private String name;
@@ -16,19 +8,15 @@ public class Catalog {
     private int price;
     private boolean isActive;
     private double estimatedBaseHours;
-
-    public Catalog(int id, String name, String description, int price, boolean isActive, double estimatedBaseHours) {
+    
+    public Catalog(int id, String name, String description, boolean isActive) {
         Validator.positive(id, "id");
         Validator.notEmpty(name, "nombre");
-        Validator.positive(price, "precio");
-        Validator.notNegative(estimatedBaseHours, "horas estimadas");
-
+        
         this.id = id;
         this.name = name;
         this.description = description;
-        this.price = price;
         this.isActive = isActive;
-        this.estimatedBaseHours = estimatedBaseHours;
     }
 
     public void setName(String name) {
@@ -41,8 +29,8 @@ public class Catalog {
     }
 
     public void setPrice(int price) {
-        Validator.positive(price, "precio");
-        this.price = price;
+    	Validator.notNegative(price, "precio");
+        this.price= price;
     }
 
     public void setActive(boolean active) {
@@ -78,9 +66,13 @@ public class Catalog {
         return estimatedBaseHours;
     }
 
+    public void toggleActive() {
+        isActive = !isActive;
+    }
+
     @Override
     public String toString() {
-        return String.format("[%d] %s | $%d | %.1f hrs | %s",
+        return String.format("[%d] %s | $%,d | %.1f hrs | %s",
                 id, name, price, estimatedBaseHours,
                 isActive ? "Activo" : "Inactivo");
     }

@@ -25,45 +25,30 @@ public class CatalogService {
         this.catalogItemRepository = catalogItemRepository;
     }
 
-    public Catalog createCatalog(String name, String description,
-            int price, boolean isActive, double estimatedBaseHours) {
-        return catalogRepository.save(name, description, price, isActive, estimatedBaseHours);
+    // Catalog
+    public Catalog createCatalog(String name, String description, boolean isActive) {
+        return catalogRepository.save(name, description, isActive);
     }
 
-    public Catalog updateCatalog(Integer id, String newName,
-            String newDescription, Integer newPrice,
-            boolean newState, double newEstimatedBaseHours) {
+    public Catalog updateCatalog(Integer id, String newName, String newDescription, Boolean newState) {
         Catalog catalog = catalogRepository.findById(id);
 
         if (newName != null && !newName.isBlank()) {
             catalog.setName(newName);
         }
 
-        if (newPrice != null && newPrice <= 0) {
-            throw new IllegalArgumentException(
-                    "Precio inválido"
-            );
-        }
-
-        if (newPrice != null) {
-            catalog.setPrice(newPrice);
+        if (newDescription != null) {
+            catalog.setDescription(newDescription);
         }
 
         return catalogRepository.update(catalog);
     }
 
-    public void disableCatalog(int catalogId) {
+    public void toggleCatalogStatus(Integer id) {
 
-        Catalog catalog = catalogRepository.findById(catalogId);
-        if (!catalog.isActive()) {
-            throw new IllegalStateException(
-                    "El catálogo ya está desactivado"
-            );
-        }
+        Catalog catalog = catalogRepository.findById(id);
 
-        catalog.setActive(false);
-
-        catalogRepository.update(catalog);
+        catalog.toggleActive();
     }
 
     public Catalog findCatalogById(int id) {
@@ -74,12 +59,35 @@ public class CatalogService {
         return catalogRepository.findAll();
     }
 
+    public void recalculateCatalogPrice(Catalog catalog) {
+
+        int total = catalogItemRepository.findByCatalogId(catalog.getId())
+                .stream()
+                .filter(ci -> ci.isActive() && !ci.isOptional())
+                .mapToInt(CatalogItem::getFinalPrice)
+                .sum();
+
+        catalog.setPrice(total);
+    }
+
+    public void recalculateCatalogHours(Catalog catalog) {
+
+        double total = catalogItemRepository.findByCatalogId(catalog.getId())
+                .stream()
+                .filter(ci -> ci.isActive() && !ci.isOptional())
+                .mapToDouble(CatalogItem::getFinalEstimatedHours)
+                .sum();
+
+        catalog.setEstimatedBaseHours(total);
+    }
+
     public List<Catalog> findActiveCatalogs() {
         return catalogRepository.findAll().stream()
                 .filter(Catalog::isActive)
                 .toList();
     }
 
+    // Item
     public Item createItem(String name, String description, int baseUnitPrice, double baseEstimatedHours, boolean isActive) {
         return itemRepository.save(name, description, baseUnitPrice, baseEstimatedHours, isActive);
     }
@@ -101,15 +109,6 @@ public class CatalogService {
         return itemRepository.update(item);
     }
 
-    public void disableItem(int id) {
-        Item item = itemRepository.findById(id);
-        if (!item.isActive()) {
-            throw new IllegalStateException("El item ya está desactivado");
-        }
-        item.setActive(false);
-        itemRepository.update(item);
-    }
-
     public Item findItemById(int id) {
         return itemRepository.findById(id);
     }
@@ -118,22 +117,35 @@ public class CatalogService {
         return itemRepository.findAll();
     }
 
+    public List<Item> findActiveItems() {
+        return itemRepository.findAll().stream()
+                .filter(Item::isActive)
+                .toList();
+    }
+
+    // CatalogItem
     public CatalogItem createCatalogItem(int catalogId, int itemId,
-            boolean isDefault, boolean isActive, ComplexityLevel complexityLevel,
+            Boolean isOptional, Boolean isActive, ComplexityLevel complexityLevel,
             Integer priceOverride, Double hoursOverride) {
+
         Catalog catalog = catalogRepository.findById(catalogId);
         Item item = itemRepository.findById(itemId);
 
-        return catalogItemRepository.save(catalog, item, isDefault, isActive, complexityLevel, priceOverride, hoursOverride);
+        CatalogItem catalogItem = catalogItemRepository.save(catalog, item, isOptional, isActive, complexityLevel, priceOverride, hoursOverride);
+
+        recalculateCatalogPrice(catalog);
+        recalculateCatalogHours(catalog);
+
+        return catalogItem;
     }
 
-    public CatalogItem updateCatalogItem(int id, Boolean isDefault, Boolean isActive, Integer priceOverride, Double hoursOverride) {
+    public CatalogItem updateCatalogItem(int id, Boolean isOptional, Boolean isActive, ComplexityLevel complexityLevel, Integer priceOverride, Double hoursOverride) {
         CatalogItem catalogItem = catalogItemRepository.findById(id);
-        if (isDefault != null) {
-            catalogItem.setDefault(isDefault);
-        }
         if (isActive != null) {
             catalogItem.setActive(isActive);
+        }
+        if (complexityLevel != null) {
+            catalogItem.setComplexityLevel(complexityLevel);
         }
         if (priceOverride != null) {
             catalogItem.setPriceOverride(priceOverride);
@@ -141,7 +153,13 @@ public class CatalogService {
         if (hoursOverride != null) {
             catalogItem.setHoursOverride(hoursOverride);
         }
-        return catalogItemRepository.update(catalogItem);
+
+        CatalogItem updatedCatalogItem = catalogItemRepository.update(catalogItem);
+
+        recalculateCatalogPrice(catalogItem.getCatalog());
+        recalculateCatalogHours(catalogItem.getCatalog());
+
+        return updatedCatalogItem;
     }
 
     public CatalogItem findCatalogItemById(int id) {
@@ -154,22 +172,26 @@ public class CatalogService {
                 .toList();
     }
 
-    public List<CatalogItem> searchCatalogItemsByName(String name) {
-        String lowerName = name.toLowerCase();
-        return catalogItemRepository.findAll().stream()
-                .filter(ci -> ci.getItem().getName().toLowerCase().contains(lowerName)
-                || ci.getCatalog().getName().toLowerCase().contains(lowerName))
-                .toList();
+    public void toggleCatalogItemStatus(Integer id) {
+
+        CatalogItem catalogItem = catalogItemRepository.findById(id);
+
+        catalogItem.toggleActive();
+
+        recalculateCatalogPrice(catalogItem.getCatalog());
+        recalculateCatalogHours(catalogItem.getCatalog());
     }
 
+//    public List<CatalogItem> searchCatalogItemsByName(String name) {
+//        String lowerName = name.toLowerCase();
+//        return catalogItemRepository.findAll().stream()
+//                .filter(ci -> ci.getItem().getName().toLowerCase().contains(lowerName)
+//                || ci.getCatalog().getName().toLowerCase().contains(lowerName))
+//                .toList();
+//    }
+//
     public List<CatalogItem> searchCatalogItemsByCatalog(int catalogId) {
         return catalogItemRepository.findByCatalogId(catalogId);
-    }
-
-    public List<CatalogItem> searchCatalogItemsByComplexity(ComplexityLevel level) {
-        return catalogItemRepository.findAll().stream()
-                .filter(ci -> ci.getComplexityLevel() == level)
-                .toList();
     }
 
     public List<CatalogItem> sortCatalogItemsByPrice() {
@@ -182,12 +204,5 @@ public class CatalogService {
         return catalogItemRepository.findAll().stream()
                 .sorted(CatalogItem.BY_NAME)
                 .toList();
-    }
-
-    public List<CatalogItem> sortCatalogItemsByComplexity() {
-        return catalogItemRepository.findAll().stream()
-                .sorted(CatalogItem.BY_COMPLEXITY)
-                .toList();
-
     }
 }

@@ -36,8 +36,10 @@ public class ItemRepository {
         items.put(item.getId(), item);
         return item;
     }
+    
+    public void toggleStatus(Integer id) {
 
-    public void deactivate(int id) {
-        findById(id).setActive(false);
+        Item item = findById(id);
+        item.setActive(!item.isActive());
     }
 }

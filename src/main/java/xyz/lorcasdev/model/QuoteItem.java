@@ -61,7 +61,7 @@ public class QuoteItem {
         return quantity;
     }
 
-    public double getUnitPrice() {
+    public int getUnitPrice() {
         return unitPrice;
     }
 
@@ -75,6 +75,7 @@ public class QuoteItem {
 
     @Override
     public String toString() {
-        return String.format("QuoteItem[%d] - Quote: %d | Cantidad: %d | Total Línea: $%d", id, quote.getId(), quantity, lineTotal);
+        return String.format("QuoteItem[%d] - Servicio: %s, Ítem: %s | Cantidad: %d | Total Línea: $%d",
+                id, catalogItem.getCatalog().getName(), catalogItem.getItem().getName(), quantity, lineTotal);
     }
 }

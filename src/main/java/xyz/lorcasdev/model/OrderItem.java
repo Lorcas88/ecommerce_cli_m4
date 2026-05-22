@@ -61,11 +61,11 @@ public class OrderItem {
         return quantity;
     }
 
-    public double getUnitPrice() {
+    public int getUnitPrice() {
         return unitPrice;
     }
 
-    public double getLineTotal() {
+    public int getLineTotal() {
         return lineTotal;
     }
 

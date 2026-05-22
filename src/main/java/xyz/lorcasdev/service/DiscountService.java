@@ -15,7 +15,7 @@ public class DiscountService {
     }
 
     public void applyAutomaticDiscounts(Quote quote) {
-        double subtotal = quote.getSubtotal();
+        int subtotal = quote.getSubtotal();
         int discountAmount = 0;
         int discountValue = 0;
         String ruleApplied = "";
@@ -52,7 +52,7 @@ public class DiscountService {
         quote.setTotal((int) quote.getSubtotal() - discountAmount);
     }
 
-    public int calculateDiscountAmount(double subtotal, DiscountType type, int value) {
+    public int calculateDiscountAmount(int subtotal, DiscountType type, int value) {
         if (type == null) {
             return 0;
         }

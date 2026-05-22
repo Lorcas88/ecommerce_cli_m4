@@ -1,6 +1,7 @@
 package xyz.lorcasdev.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import xyz.lorcasdev.enums.OrderStatus;
 
@@ -11,13 +12,13 @@ public class Order {
     private final Quote quote;
     private OrderStatus status;
     private int subtotal;
-    private double discountAmount;
+    private int discountAmount;
     private int total;
     private final LocalDateTime createdAt;
     private LocalDateTime startDate;
     private LocalDateTime estimatedDeliveryDate;
 
-    public Order(int id, Customer customer, Quote quote, OrderStatus status, int subtotal, double discountAmount, int total, LocalDateTime createdAt, LocalDateTime startDate, LocalDateTime estimatedDeliveryDate) {
+    public Order(int id, Customer customer, Quote quote, OrderStatus status, int subtotal, int discountAmount, int total, LocalDateTime createdAt, LocalDateTime startDate, LocalDateTime estimatedDeliveryDate) {
         Validator.positive(id, "id");
         Validator.notNegative(subtotal, "subtotal");
         Validator.notNegative(total, "total");
@@ -39,19 +40,25 @@ public class Order {
         this.status = status;
     }
 
-    public void setSubtotal(int subtotal) {
-        Validator.notNegative(subtotal, "subtotal");
-        this.subtotal = subtotal;
-    }
-
-    public void setDiscountAmount(double discountAmount) {
+    // public void setSubtotal(int subtotal) {
+    //     Validator.notNegative(subtotal, "subtotal");
+    //     this.subtotal = subtotal;
+    // }
+    public void setDiscountAmount(int discountAmount) {
         Validator.notNegative(discountAmount, "discount_amount");
         this.discountAmount = discountAmount;
     }
 
-    public void setTotal(int total) {
-        Validator.notNegative(total, "total");
-        this.total = total;
+    // public void setTotal(int total) {
+    //     Validator.notNegative(total, "total");
+    //     this.total = total;
+    // }
+    public void recalculateTotals(List<OrderItem> items) {
+        subtotal = items.stream()
+                .mapToInt(OrderItem::getLineTotal)
+                .sum();
+
+        total = subtotal - discountAmount;
     }
 
     public void setStartDate(LocalDateTime startDate) {
@@ -78,15 +85,15 @@ public class Order {
         return status;
     }
 
-    public double getSubtotal() {
+    public int getSubtotal() {
         return subtotal;
     }
 
-    public double getDiscountAmount() {
+    public int getDiscountAmount() {
         return discountAmount;
     }
 
-    public double getTotal() {
+    public int getTotal() {
         return total;
     }
 

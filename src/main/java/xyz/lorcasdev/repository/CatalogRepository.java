@@ -15,9 +15,9 @@ public class CatalogRepository {
     // Contadores para generar IDs automáticos
     private int catalogCounter = 1;
 
-    public Catalog save(String name, String description, int price, boolean isActive, double estimatedBaseHours) {
+    public Catalog save(String name, String description, boolean isActive) {
         int id = catalogCounter++;
-        Catalog s = new Catalog(id, name, description, price, true, estimatedBaseHours);
+        Catalog s = new Catalog(id, name, description, true);
         catalogs.put(id, s);
         return s;
     }
@@ -39,10 +39,9 @@ public class CatalogRepository {
         return catalog;
     }
 
-    /**
-     * Desactiva un catalogo de servicios (no lo elimina físicamente).
-     */
-    public void deactivate(Integer id) {
-        findById(id).setActive(false);
+    public void toggleStatus(Integer id) {
+
+        Catalog catalog = findById(id);
+        catalog.setActive(!catalog.isActive());
     }
 }

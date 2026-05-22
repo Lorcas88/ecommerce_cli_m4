@@ -7,7 +7,7 @@ import xyz.lorcasdev.enums.ComplexityLevel;
 public class CatalogItem {
 
     public static final Comparator<CatalogItem> BY_PRICE
-            = Comparator.comparingDouble(
+            = Comparator.comparingInt(
                     CatalogItem::getFinalPrice
             );
 
@@ -18,21 +18,16 @@ public class CatalogItem {
                             .toLowerCase()
             );
 
-    public static final Comparator<CatalogItem> BY_COMPLEXITY
-            = Comparator.comparing(
-                    CatalogItem::getComplexityLevel
-            );
-
     private final int id;
     private final Catalog catalog;
     private final Item item;
-    private boolean isDefault;
+    private boolean isOptional;
     private boolean isActive;
-    private final ComplexityLevel complexityLevel;
+    private ComplexityLevel complexityLevel;
     private Integer priceOverride;
     private Double hoursOverride;
 
-    public CatalogItem(int id, Catalog catalog, Item item, boolean isDefault, boolean isActive, ComplexityLevel complexityLevel, Integer priceOverride, Double hoursOverride) {
+    public CatalogItem(int id, Catalog catalog, Item item, Boolean isOptional, Boolean isActive, ComplexityLevel complexityLevel, Integer priceOverride, Double hoursOverride) {
         Validator.positive(id, "id");
         if (priceOverride != null) {
             Validator.positive(priceOverride, "sobreescritura de precio");
@@ -44,19 +39,29 @@ public class CatalogItem {
         this.id = id;
         this.catalog = catalog;
         this.item = item;
-        this.isDefault = isDefault;
-        this.isActive = isActive;
-        this.complexityLevel = complexityLevel;
+        this.isOptional = isOptional != null
+                ? isOptional
+                : false;
+        this.isActive = isActive != null
+                ? isActive
+                : true;
+        this.complexityLevel = complexityLevel != null
+                ? complexityLevel
+                : ComplexityLevel.MEDIUM;
         this.priceOverride = priceOverride;
         this.hoursOverride = hoursOverride;
     }
 
-    public void setDefault(boolean isDefault) {
-        this.isDefault = isDefault;
+    public void setIsOptional(boolean isOptional) {
+        this.isOptional = isOptional;
     }
 
     public void setActive(boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public void setComplexityLevel(ComplexityLevel complexityLevel) {
+        this.complexityLevel = complexityLevel;
     }
 
     public void setPriceOverride(Integer priceOverride) {
@@ -85,8 +90,8 @@ public class CatalogItem {
         return item;
     }
 
-    public boolean isDefault() {
-        return isDefault;
+    public boolean isOptional() {
+        return isOptional;
     }
 
     public boolean isActive() {
@@ -115,7 +120,7 @@ public class CatalogItem {
                 && item.isActive();
     }
 
-    public double getFinalPrice() {
+    public int getFinalPrice() {
         return priceOverride != null
                 ? priceOverride
                 : item.getBaseUnitPrice();
@@ -127,8 +132,15 @@ public class CatalogItem {
                 : item.getBaseEstimatedHours();
     }
 
+    public void toggleActive() {
+        isActive = !isActive;
+    }
+
     @Override
     public String toString() {
-        return String.format("CatalogItem[%d] - Service: %s, Item: %s (%s)", id, catalog.getName(), item.getName(), complexityLevel);
+        return String.format("CatalogItem[%d] - Service: %s, Item: %s (%s) | %,d | %.1f hrs | %s | %s",
+                id, catalog.getName(), item.getName(), complexityLevel, getFinalPrice(), getFinalEstimatedHours(),
+                isOptional ? "Opcional" : "Obligatorio",
+                isActive ? "Activo" : "Inactivo");
     }
 }

@@ -17,7 +17,7 @@ public class OrderRepository {
     private final Map<Integer, Order> orders = new HashMap<>();
     private int counter = 1;
 
-    public Order save(Customer customer, Quote quote, OrderStatus status, int subtotal, double discountAmount, int total, LocalDateTime createdAt, LocalDateTime startDate, LocalDateTime estimatedDeliveryDate) {
+    public Order save(Customer customer, Quote quote, OrderStatus status, int subtotal, int discountAmount, int total, LocalDateTime createdAt, LocalDateTime startDate, LocalDateTime estimatedDeliveryDate) {
         int id = counter++;
         Order order = new Order(id, customer, quote, status, subtotal, discountAmount, total, createdAt, startDate, estimatedDeliveryDate);
         orders.put(id, order);
